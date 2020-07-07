@@ -1,0 +1,424 @@
+//config文件中参数与euroc数据集的有些差异，是自己又标定的吗？
+msckf-vio
+//固定坐标系
+fixed_frame_id    world   
+//子坐标系
+child_frame_id    odom
+//bool型标志位
+publish_tf        true
+//帧率
+frame_rate        20
+
+position_std_threshold      8
+rotation_threshold          0.2618
+translation_threshold       0.4
+tracking_rate_threshold     0.5
+Feature::optimization_config.translation_threshold      -1.0
+
+//imu噪声
+IMUState::gyro_noise           0.000025
+IMUState::acc_noise            0.0025
+IMUState::gyro_bias_noise      0.000001
+IMUState::acc_bias_noise       0.0001
+//图像噪声
+Feature::observation_noise     0.001225
+//初始状态
+state_server.imu_state.velocity  0;0;0
+//IMU及外参初始协防差矩阵
+rotation_cov                0
+velocity_cov                0.25
+gyro_bias_cov               0.01
+acc_bias_cov                0.01
+position_cov                0
+extrinsic_rotation_cov      0.000305
+extrinsic_translation_cov   0.000025
+state_server.state_cov=[rotation_cov 0 0 0 0 0 0
+			0 gyro_bias_cov 0 0 0 0 0
+			0 0 velocity_cov 0 0 0 0
+			0 0 0 acc_bias_cov 0 0 0
+			0 0 0 0 position_cov 0 0
+			0 0 0 0 0 extrinsic_rotation_cov 0
+			0 0 0 0 0 0 extrinsic_translation_cov]
+//imu与cam0的变换
+T_imu_cam0
+    [0.014865542981794,   0.999557249008346,  -0.025774436697440, 0.065222909535531,
+    -0.999880929698575,   0.014967213324719,   0.003756188357967, -0.020706385492719,
+     0.004140296794224,   0.025715529947966,   0.999660727177902, -0.008054602460030,
+                     0,                   0,                   0,  1.000000000000000]
+//cam0与cam1的变换
+CAMState::T_cam0_cam1
+ [0.999997256477881,   0.002312067192424,   0.000376008102415,  -0.110073808127187, 
+    -0.002317135723281,   0.999898048506644,   0.014089835846648,   0.000399121547014,
+    -0.000343393120525,  -0.014090668452714,   0.999900662637729,  -0.000853702503357, 
+                     0,                   0,                   0,   1.000000000000000]
+//imu与body的变换
+IMUState::T_imu_body
+//最大相机状态个数
+max_cam_state_size       20
+
+
+
+publisher:
+odom_pub         <nav_msgs::Odometry>           /firefly_sbx/vio/odom    发布的里程计信息 
+feature_pub      <sensor_msgs::PointCloud2>     /firefly_sbx/vio/feature_point_cloud    发布的点云信息，用于rviz显示
+mocap_odom_pub   <nav_msgs::Odometry>          /firefly_sbx/vio/gt_odom
+ tf_pub         /tf [tf2_msgs/TFMessage]     坐标系信息
+
+
+
+subscriber:  
+imu_sub           ~imu重映射为/imu0    /imu0              [sensor_msgs/Imu]    MsckfVio::imuCallback        imu传感器数据
+feature_sub       /firefly_sbx/image_processor/features          [msckf_vio/CameraMeasurement]               MsckfVio::featureCallback    图像特征信息
+mocap_odom_sub   /firefly_sbx/vio/mocap_odom   MsckfVio::mocapOdomCallback
+   
+server:
+reset_srv        /firefly_sbx/vio/reset                 MsckfVio::resetCallback
+   
+
+
+
+image_processor
+//相机畸变类型
+cam0_distortion_model    radtan
+cam1_distortion_model    radtan
+//图片分辨率
+cam0_resolution_temp     [752, 480]
+cam0_resolution          [752; 480]
+cam1_resolution          [752; 480]
+//相机内参
+cam0_intrinsics          [458.654, 457.296, 367.215, 248.375]
+cam1_intrinsics          [457.587, 456.134, 379.999, 255.238]
+//相机畸变系数
+cam0_distortion_coeffs   [-0.28340811, 0.07395907, 0.00019359, 1.76187114e-05]
+cam1_distortion_coeffs   [-0.28368365,  0.07451284, -0.00010473, -3.55590700e-05]
+//imu与cam0的变换
+T_imu_cam0
+[0.014865542981794,   0.999557249008346,  -0.025774436697440,  0.065222909535531,
+    -0.999880929698575,   0.014967213324719,   0.003756188357967,  -0.020706385492719,
+     0.004140296794224,   0.025715529947966,   0.999660727177902,  -0.008054602460030,
+                     0,                   0,                   0,   1.000000000000000]
+//cam0与cam1的变换
+T_cam0_cam1
+[0.999997256477881,   0.002312067192424,   0.000376008102415,  -0.110073808127187, 
+    -0.002317135723281,   0.999898048506644,   0.014089835846648,   0.000399121547014,
+    -0.000343393120525,  -0.014090668452714,   0.999900662637729,  -0.000853702503357, 
+                     0,    
+               0,                   0,   1.000000000000000]
+//图像行划分为4块，列划分为5块，总共4*5个网格
+processor_config.grid_row       4
+processor_config.grid_col       5
+//每个网格的最小和最大特征数
+processor_config.grid_min_feature_num      3
+processor_config.grid_max_feature_num      4
+//金字塔层数
+processor_config.pyramid_levels            3
+
+
+processor_config.patch_size               15
+processor_config.fast_threshold           10
+processor_config.max_iteration            30
+processor_config.track_precision         0.01
+processor_config.ransac_threshold          3
+processor_config.stereo_threshold          5
+
+
+publisher:
+feature_pub         [msckf_vio/CameraMeasurement]     /firefly_sbx/image_processor/features             发布处理后的图像特征
+tracking_info_pub   [msckf_vio/TrackingInfo]          /firefly_sbx/image_processor/tracking_info        发布外点剔除阶段的特征点数量信息
+debug_stereo_pub                                      /firefly_sbx/image_processor/debug_stereo_image   用于调试
+
+subscriber
+message_filters::Subscriber        cam0_img_sub   [sensor_msgs/Image]             ～/cam0_image重映射为/cam0/image_raw       cam0传感器数据
+message_filters::Subscriber        cam1_img_sub   [sensor_msgs/Image]                               ～/cam1_image重映射为/cam1/image_raw   cam1传感器数据
+ 
+message_filters::TimeSynchronizer  stereo_sub         cam0_img_sub        cam1_img_sub       ImageProcessor::stereoCallback   用于cam0和cam1时间同步
+Subscriber  imu_sub                  [sensor_msgs/Imu]             /imu0          ImageProcessor::imuCallback         imu传感器数据
+
+
+
+
+msg 
+  
+msckf_vio/CameraMeasurement
+	std_msgs/Header header
+	  uint32 seq
+	  time stamp
+	  string frame_id
+	msckf_vio/FeatureMeasurement[] features
+	  uint64 id
+	  float64 u0
+	  float64 v0
+	  float64 u1
+	  float64 v1
+
+msckf_vio/TrackingInfo
+
+std_msgs/Header header
+  uint32 seq
+  time stamp
+  string frame_id
+int16 before_tracking
+int16 after_tracking
+int16 after_matching
+int16 after_ransac
+
+
+
+
+
+ImageProcessor::initialize()
+/*1.判断是否初始化成功
+ *2.Initialize state server
+ *3.创建卡方检测表
+ *
+ * 初始化成功条件：1.loadParameters()完成，  2.createRosIO()完成
+ */
+
+
+ImageProcessor::imuCallback（）
+//接受IMU信息，存入imu_msg_buffer中，用于初始化图像，计算平均角速度，来提供光流位置初值
+//当is_first_img为true时，不接受imu了
+
+
+
+
+
+
+stereoCallback()
+//step1：从ros发布的图像topic中读取左右目图像
+//step2：为左右目创建图像金字塔
+//如果是第一帧：
+    //step3：初始化第一帧，并画图
+//如果不是第一帧：
+    //step4：光流跟踪，获得匹配点，剔除外点
+    //step5：如果特征数量达不到阈值，提取新特征点，按response添加特征点
+    //step6：如果特征数量超出阈值，按lifetime剔除特征点
+//step7：发布特征点归一化相机坐标feature_pub和跟踪信息track_info
+//step8：更新相关状态变量，cur状态转为pre状态，为下一个时刻做准备
+
+
+ImageProcessor::initializeFirstFrame()
+/*step1：cam0特征提取
+ *step2：左右目光流跟踪（匹配）
+ *step3：将左右目特征点划分在图像网格中，用GridFeatures存储，
+ *       如果提取的特征点数量大于grid_min_feature_num，则按照响应值response筛选
+ */
+
+
+
+
+ImageProcessor::trackFeatures()
+//
+// prev frames cam0 ----------> cam1
+//              |光流             |
+//              |ransac          |ransac
+//              |   stereo match |
+// curr frames cam0 ----------> cam1
+//
+/*step1：用pre和cur之间IMU的平均角速度粗略计算pre和cur image之间的旋转，
+ *       然后粗略计算pre中的特征点在cur image中的位置，为光流提供初值
+ *step2：cam0 pre和cur帧间光流跟踪
+ *step3: curr cam0和cam1双目匹配（光流跟踪，包括根据点到极线的距离剔除外点）
+ *step4：剔除外点，
+ *       1.cur左右图光流跟踪上，且cam0前后图光流跟踪上的特征点才得以保留
+ *       2.cam0的prev和curr匹配点进行RANSAC剔除外点
+ *       3.cam1的prev和curr匹配点进行RANSAC剔除外点（RANSAC模型为归一化相机坐标的对极约束）
+ */
+
+ImageProcessor::addNewFeatures()
+/*经过上面的匹配和筛选，当前帧的特征点数量一般会低于最低数量要求，
+ *所以该步骤会检测cam0已经追踪的特征点之外的新的fast特征点,然后在cam1中寻找匹配点,
+ *并在图像块中添加response较大的特征点，这样就能保证新的帧里有足够多且分布均匀的特征点。
+ */
+//step1：创建掩膜，防止提取到已经存在的特征点
+//step2：在curr cam0中提取特征点，划分到网格中
+//step3：按response排序，删除序号大于grid_max_feature_num的特征点
+//step4：为剩下提取的特征点在cam1中找匹配点，剔除外点
+//step5：重新对剩下的点按response排序，按照阈值grid_min_feature_num将新特征点添加到curr_features_ptr中
+
+
+ImageProcessor::pruneGridFeatures()
+//剔除多余特征点（序号大于grid_max_feature_num）
+//如果某网格中的特征点数量超过grid_max_feature_num，
+//则要按照特征点Lifetime排序，删除后面的特征点
+//所以骤步起作用的前提在于前一帧不同网格的太多特征点投影到当前帧同一个分块图像中来了
+
+
+ImageProcessor::publish()
+//step1：将特征点化为归一化相机坐标
+//step2：发布feature_pub
+//step3：发布tracking info
+
+
+std::vector<sensor_msgs::Imu> imu_msg_buffer;
+cv_bridge::CvImageConstPtr cam0_prev_img_ptr;
+  cv_bridge::CvImageConstPtr cam0_curr_img_ptr;   //指向rosbag中传来的current图像cam0
+  cv_bridge::CvImageConstPtr cam1_curr_img_ptr;   //指向rosbag中传来的current图像cam1
+ boost::shared_ptr<GridFeatures> prev_features_ptr;
+  boost::shared_ptr<GridFeatures> curr_features_ptr; //指针指向当前帧的特征
+ typedef std::map<int, std::vector<FeatureMetaData> > GridFeatures;   //key为grid序号，value为grid中存储的feature
+
+ //单个特征的主要信息
+  struct FeatureMetaData {
+    FeatureIDType id;
+    float response;         //harris响应
+    int lifetime;           //生存周期
+    cv::Point2f cam0_point; //像素坐标（未矫正）
+    cv::Point2f cam1_point; //像素坐标（未矫正）
+  };
+
+
+
+MsckfVio::initialize()
+/*1.判断是否初始化成功
+ *2.Initialize state server
+ *3.创建卡方检测表
+ *
+ * 初始化成功条件：1.loadParameters()完成，  2.createRosIO()完成
+ */
+
+
+MsckfVio::imuCallback(）
+/*1.将imu数据存储到imu_msg_buffer中
+ *2.如果重力向量未初始化，则imu_msg_buffer存储了200个数据时，对重力向量和bias进行估计
+ *  即调用initializeGravityAndBias()
+ */
+
+
+MsckfVio::initializeGravityAndBias()
+/*
+ *step1.利用前200个imu数据估计imu系下的重力向量和陀螺仪bias
+ *step2.根据imu系下重力向量估计world系下的重力向量
+ *step3.根据imu系和world系下的重力向量估计imu到world的旋转
+ *step4.更新相关成员变量IMUState::gravity和state_server.imu_state.orientation
+ *
+ * 静止状态下利用前200个imu数据， 静止状态下陀螺仪的均值就是bias在imu系下的估计值，
+ * 静止状态下加速度计的均值就是重力在imu系下的估计值，所以初始化一定要在系统静止时进行
+ * 否则会初始化失败，前端能匹配成功，但后端没有里程计输出的。
+ */
+
+
+MsckfVio::featureCallback（）
+/*
+ * 1.传播imu状态（状态预测）
+ * 2.状态增广
+ * 3.给特征点增加观测
+ * 4.状态更新
+ * 5.发布odometry
+ * 6.检查系统是否需要复位
+ */
+
+
+MsckfVio::batchImuProcessing(）
+/*预测过程：
+ * 1.状态量的预测（数值积分）
+ * 2.协方差的传播
+ * 3.删除用过的IMU信息
+ */
+
+
+MsckfVio::stateAugmentation(）
+/*状态增广阶段（只将左目作为状态变量，右目不作为状态变量，一次增广1个）
+ * step1：相机状态增广，使用IMU状态的估计值和外参来估计cam状态
+ * step2：协方差矩阵增广
+ * step3：使协方差矩阵变为对称矩阵，对角线元素相加后取平均
+ * 输入：cam时间戳
+ */
+
+MsckfVio::addFeatureObservations(）
+/*将topic传来的特征点添加到map——server中
+ * 1.如果是新特征，就在map_server中创建新特征，给新特征添加观测
+ * 2.如果是旧特征,则将当前帧加入到map_server该点的观测之中
+ * 输入：ros传来的CameraMeasurement类型的消息
+ * 输出：成员变量map_server
+ */
+
+MsckfVio::removeLostFeatures()
+//测量更新阶段
+//step1：从跟丢的特征中筛选可以三角化，并进行三角化
+/*筛选条件：step1.1：该特征的被观测次数>=3次
+ *        step1.2：如果点没有被初始化，
+ *                 1.该特征第一个和最后一个观测帧之间的运动足够大（视差大）
+ *                 2.三角化后所有点都在相机前面
+ *（已经初始化且满足step1.1的点可用于测量更新）
+ */
+
+
+MsckfVio::pruneCamStateBuffer()
+//step1：找到应该剔除的cam状态
+/*step2：遍历被待删帧观测到的所有特征点，
+ *       如果该特征没初始化且不能初始化（三角化），则删除该特征点中待删相机的观测
+ *       如果该特征没初始化且能初始化（三角化），则进行三角化，然后进行EKF测量更新
+ *       最后删除该特征点中待删相机的观测，删除协方差矩阵的对应块，及对应的cam状态
+ */
+
+
+Feature::checkMotion(）
+//通过计算该特征点的所有观测帧中第一帧与最后一帧的视差来判断是否有足够大的运动
+//视差足够大，才可以三角化
+//输入：观测到该特征的所有cam状态
+//输出：如果有足够大的运动，返回1,否则返回0
+
+
+
+
+
+MsckfVio::publish（）
+
+
+Feature::initializePosition（）
+//对特征点逆深度坐标用LM方法进行三角化（多个约束）
+//输入：观测到该特征点的相机cam_states
+//输出：是否初始化成功（特征点在每个相机前面）
+//输出：三角化后的特征点在世界坐标系下的3d坐标（类成员变量）
+
+
+ MsckfVio::findRedundantCamStates(）
+//当cam state数达到阈值时，进行cam状态剔除,要剔除两帧
+/*剔除策略：根据平移，旋转角度，特征跟踪率，判断次次新帧和次新帧距次次次新帧的运动大小
+ *        如果运动小于阈值，就剔除对应的帧
+ *        否则，剔除最老的帧
+ *输出：相机状态id rm_cam_state_ids
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+std::vector<sensor_msgs::Imu> imu_msg_buffer
+StateServer state_server;
+struct StateServer {
+      IMUState imu_state;                                   //imu状态
+      CamStateServer cam_states;                            //camera状态
+      // State covariance matrix
+      Eigen::MatrixXd state_cov;                        //所有状态的协方差矩阵P
+      Eigen::Matrix<double, 12, 12> continuous_noise_cov;   //公式10中Q_imu
+    };
+//key：cam_id，value：CAMState
+typedef std::map<StateIDType, CAMState, std::less<int>,
+        Eigen::aligned_allocator<
+        std::pair<const StateIDType, CAMState> > > CamStateServer;
+
+MapServer map_server;    //管理所有用于跟踪的特帧点
+//所有的future的信息组合在一起，形成MapServer，key为featureid value为feature信息，是个类
+typedef std::map<FeatureIDType, Feature, std::less<int>,
+        Eigen::aligned_allocator<
+        std::pair<const FeatureIDType, Feature> > > MapServer;
+
+
+
+
+//key表示此feature所在的图像id，value表示此feature所在此图像中的左右目图像像素
+  std::map<StateIDType, Eigen::Vector4d, std::less<StateIDType>,
+    Eigen::aligned_allocator<
+      std::pair<const StateIDType, Eigen::Vector4d> > > observations;
+

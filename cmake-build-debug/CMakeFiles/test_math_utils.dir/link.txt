@@ -1,0 +1,1 @@
+/usr/bin/c++  -g  -rdynamic CMakeFiles/test_math_utils.dir/test/math_utils_test.cpp.o  -o devel/lib/msckf_vio/test_math_utils  -L/home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/gtest -Wl,-rpath,/home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/gtest:/home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/gtest/gtest gtest/gtest/libgtest.so -lpthread 

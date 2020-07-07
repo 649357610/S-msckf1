@@ -1,0 +1,105 @@
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_238d7/fast && /usr/bin/make -f CMakeFiles/cmTC_238d7.dir/build.make CMakeFiles/cmTC_238d7.dir/build
+make[1]: Entering directory '/home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_238d7.dir/src.c.o
+/usr/bin/cc   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_238d7.dir/src.c.o   -c /home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_238d7
+/home/gaofan/下载/clion-2019.3.5/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_238d7.dir/link.txt --verbose=1
+/usr/bin/cc  -DCMAKE_HAVE_LIBC_PTHREAD    -rdynamic CMakeFiles/cmTC_238d7.dir/src.c.o  -o cmTC_238d7 
+CMakeFiles/cmTC_238d7.dir/src.c.o：在函数‘main’中：
+src.c:(.text+0x3c)：对‘pthread_create’未定义的引用
+src.c:(.text+0x48)：对‘pthread_detach’未定义的引用
+src.c:(.text+0x59)：对‘pthread_join’未定义的引用
+src.c:(.text+0x6d)：对‘pthread_atfork’未定义的引用
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_238d7.dir/build.make:86: recipe for target 'cmTC_238d7' failed
+make[1]: *** [cmTC_238d7] Error 1
+make[1]: Leaving directory '/home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/CMakeFiles/CMakeTmp'
+Makefile:121: recipe for target 'cmTC_238d7/fast' failed
+make: *** [cmTC_238d7/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_7b991/fast && /usr/bin/make -f CMakeFiles/cmTC_7b991.dir/build.make CMakeFiles/cmTC_7b991.dir/build
+make[1]: Entering directory '/home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_7b991.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_7b991.dir/CheckFunctionExists.c.o   -c /home/gaofan/下载/clion-2019.3.5/bin/cmake/linux/share/cmake-3.15/Modules/CheckFunctionExists.c
+Linking C executable cmTC_7b991
+/home/gaofan/下载/clion-2019.3.5/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7b991.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_7b991.dir/CheckFunctionExists.c.o  -o cmTC_7b991 -lpthreads 
+/usr/bin/ld: 找不到 -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_7b991.dir/build.make:86: recipe for target 'cmTC_7b991' failed
+make[1]: *** [cmTC_7b991] Error 1
+make[1]: Leaving directory '/home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/CMakeFiles/CMakeTmp'
+Makefile:121: recipe for target 'cmTC_7b991/fast' failed
+make: *** [cmTC_7b991/fast] Error 2
+
+
+
+Determining if the function sgemm_ exists failed with the following output:
+Change Dir: /home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_93565/fast && /usr/bin/make -f CMakeFiles/cmTC_93565.dir/build.make CMakeFiles/cmTC_93565.dir/build
+make[1]: Entering directory '/home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_93565.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=sgemm_   -o CMakeFiles/cmTC_93565.dir/CheckFunctionExists.c.o   -c /home/gaofan/下载/clion-2019.3.5/bin/cmake/linux/share/cmake-3.15/Modules/CheckFunctionExists.c
+Linking C executable cmTC_93565
+/home/gaofan/下载/clion-2019.3.5/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_93565.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=sgemm_    -rdynamic CMakeFiles/cmTC_93565.dir/CheckFunctionExists.c.o  -o cmTC_93565 
+CMakeFiles/cmTC_93565.dir/CheckFunctionExists.c.o：在函数‘main’中：
+CheckFunctionExists.c:(.text+0x10)：对‘sgemm_’未定义的引用
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_93565.dir/build.make:86: recipe for target 'cmTC_93565' failed
+make[1]: *** [cmTC_93565] Error 1
+make[1]: Leaving directory '/home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/CMakeFiles/CMakeTmp'
+Makefile:121: recipe for target 'cmTC_93565/fast' failed
+make: *** [cmTC_93565/fast] Error 2
+
+
+
+Determining if the function cheev_ exists failed with the following output:
+Change Dir: /home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_7888d/fast && /usr/bin/make -f CMakeFiles/cmTC_7888d.dir/build.make CMakeFiles/cmTC_7888d.dir/build
+make[1]: Entering directory '/home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_7888d.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=cheev_   -o CMakeFiles/cmTC_7888d.dir/CheckFunctionExists.c.o   -c /home/gaofan/下载/clion-2019.3.5/bin/cmake/linux/share/cmake-3.15/Modules/CheckFunctionExists.c
+Linking C executable cmTC_7888d
+/home/gaofan/下载/clion-2019.3.5/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7888d.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=cheev_    -rdynamic CMakeFiles/cmTC_7888d.dir/CheckFunctionExists.c.o  -o cmTC_7888d /usr/lib/libblas.so 
+CMakeFiles/cmTC_7888d.dir/CheckFunctionExists.c.o：在函数‘main’中：
+CheckFunctionExists.c:(.text+0x10)：对‘cheev_’未定义的引用
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_7888d.dir/build.make:87: recipe for target 'cmTC_7888d' failed
+make[1]: *** [cmTC_7888d] Error 1
+make[1]: Leaving directory '/home/gaofan/s-msckf/src/msckf_vio/cmake-build-debug/CMakeFiles/CMakeTmp'
+Makefile:121: recipe for target 'cmTC_7888d/fast' failed
+make: *** [cmTC_7888d/fast] Error 2
+
+
+
